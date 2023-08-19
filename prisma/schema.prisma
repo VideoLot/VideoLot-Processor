@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  Admin
+  Moderator
+  User
+}
+
+enum UploadStage {
+  Uploading
+  Processing
+  Deploying
+  Complite
+}
+
+enum StageStatus {
+  InProgress
+  Complite
+  Failed
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  role          UserRole      @default(User)
+  history       Subscribtion[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model SubscribtionTier {
+  id              String        @id @default(cuid())
+  isActive        Boolean
+  name            String
+  description     String
+  cost            Decimal
+  durationDays    Int
+  affectedVideos  VideoData[]   @relation("TierToVideo")
+  history         Subscribtion[]
+}
+
+model Subscribtion {
+  id                  String           @id @default(cuid())
+  subscribtionTierId  String
+  subscribtionTier    SubscribtionTier @relation(fields: [subscribtionTierId], references: [id])
+  subscriberId        String
+  subscriber          User             @relation(fields: [subscriberId], references: [id])
+  expirationDate      DateTime
+  createdAt           DateTime         @default(now())
+}
+
+model VideoData {
+  id                String              @id @default(cuid())
+  title             String
+  previewURL        String
+  alt               String
+  views             Int
+  tags              String[]
+  uploadedDate      DateTime
+  videoTrack        VideoTrack? 
+  audioTracks       AudioTrack[]
+  avaliableForTiers SubscribtionTier[]  @relation("TierToVideo")
+  VideoProcess      UploadState?
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @updatedAt
+}
+
+model TrackInfo {
+  id            String      @id @default(cuid())
+  segmentsCount Int
+  duration      Int
+  codec         String
+  trackPath     String
+  quality       String
+  videoTrack    VideoTrack?
+  audioTrack    AudioTrack?
+  createdAt     DateTime?   @default(now())
+  updatedAt     DateTime?   @updatedAt
+}
+
+model VideoTrack {
+  id          String      @id @default(cuid())
+  videoData   VideoData?  @relation(fields: [videoDataId], references: [id])
+  videoDataId String      @unique
+  trackInfo   TrackInfo?  @relation(fields: [trackInfoId], references: [id])
+  trackInfoId String      @unique
+}
+
+model AudioTrack {
+  id          String      @id @default(cuid())
+  videoData   VideoData?  @relation(fields: [videoDataId], references: [id])
+  videoDataId String
+  trackInfo   TrackInfo?  @relation(fields: [trackInfoId], references: [id])
+  trackInfoId String      @unique
+}
+
+model UploadState {
+  id            String      @id @default(cuid())
+  videoData     VideoData   @relation(fields: [videoDataId], references: [id])
+  videoDataId   String      @unique
+  stage         UploadStage
+  stageStage    StageStatus
+  filePath      String
+  progress      Float
+}
