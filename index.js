@@ -57,14 +57,6 @@ app.post('/', async (req, res) => {
     const basePath = path.join(TEMP_FOLDER, id);
     const fullPath = path.join(basePath, `source.${ext}`);
     if (isFirstChunk) {
-        fs.access(basePath, rwAccess, (error) => {
-            if (error) {
-                console.warn(`Can't access location ${basePath}`);
-                res.sendStatus(500);
-                return;
-            }
-        });
-
         if (!fs.existsSync(basePath)) {
             fs.mkdirSync(basePath, { recursive: true });
         }
@@ -81,7 +73,7 @@ app.post('/', async (req, res) => {
         progress = currentChunkIndex / totalChunk;
         const data = req.body.toString().split(',')[1];
         const buffer = Buffer.from(data, 'base64');
-        fs.appendFileSync(fullPath, buffer);// new Uint8Array(buffer));
+        fs.appendFileSync(fullPath, buffer);
         if (isLastChunk) {
             stageStatus = StageStatus.Complete;
             progress = 1;

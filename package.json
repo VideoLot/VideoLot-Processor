@@ -1,9 +1,13 @@
 {
-  "name": "videolee-processor",
+  "name": "@videolot/videolot-processor",
   "version": "1.0.0",
-  "description": "Processor of video content for VideoLee web service. Based on ffmpeg utility.",
+  "description": "Processor of video content for VideoLot web service. Based on ffmpeg utility.",
   "main": "index.js",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:VideoLot/VideoLot-Processor.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./index.js"
@@ -18,6 +22,6 @@
     "express": "^4.18.2",
     "fast-folder-size": "^2.2.0",
     "prisma": "^5.1.1",
-    "videolee-cloud-wrapper": "file:../Videolee-Cloud-Wrapper"
+    "videolee-cloud-wrapper": "file:../VideoLot-Cloud-Wrapper"
   }
 }
