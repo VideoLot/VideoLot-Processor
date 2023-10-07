@@ -4,10 +4,10 @@ import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { spawn, spawnSync } from 'child_process';
-import pkg from '@prisma/client';
+import pkg from '@videolot/videolot-prisma';
 import os from 'os'
 import { getMappingsForInCodec } from './mime-map.js';
-import { createStorageApi } from 'videolee-cloud-wrapper';
+import { createStorageApi } from '@videolot/videolot-cloud-wrapper/dist/index.js';
 import fastFolderSize from 'fast-folder-size';
 import { promisify } from 'util';
 import bodyParser from 'body-parser';
