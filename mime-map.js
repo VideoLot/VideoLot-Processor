@@ -1,7 +1,8 @@
 const CODEC_MIME_EXTENSION = [
     {inCodec: 'mp3',    outCodec: 'mp3', mime: 'audio/mpeg',            extension: '.mp3'},
     {inCodec: 'ac3',    outCodec: 'ac3', mime: 'audio/ac3',             extension: '.ac3'},
-    {inCodec: 'h264',   outCodec: 'vp9', mime: 'video/webm;codecs=vp8', extension: '.webm'}
+    {inCodec: 'h264',   outCodec: 'vp9', mime: 'video/webm;codecs=vp9', extension: '.webm'},
+    {inCodec: 'aac',    outCodec: 'ogg', mime: 'audio/ogg',             extension: '.ogg'}
 ];
 
 export function getMappingsForInCodec(codec) {
